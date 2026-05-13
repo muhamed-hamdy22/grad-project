@@ -1,37 +1,54 @@
 "use client";
 
-import { UserButton } from "@clerk/nextjs";
+import { Suspense } from 'react';
+import { usePathname } from "next/navigation";
 import { LogOut } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useRouter } from "next/navigation";
-import { Button } from "./ui/button";
+
+import { Button } from "@/components/ui/button";
+import { SearchInput } from "./search-input";
+
+function SearchBarFallback() {
+    return <>placeholder</>;
+}
+
+function getNavButton(isTeacherPage: boolean, isCoursePage: boolean, userId: string) {
+    if ( isCoursePage) {
+        return (
+            <Link href="/search">
+                <Button size="sm" variant="ghost">
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Exit
+                </Button>
+            </Link>
+        );
+    }
+
+    
+
+    return null;
+}
 
 export const NavbarRoutes = () => {
+    const userId = `${process.env.NEXT_PUBLIC_TEACHER_ID}`;
     const pathname = usePathname();
-    const router = useRouter();
-    const isTeacherPage = pathname?.startsWith("/teacher");
-    const isPlayerPage = pathname?.startsWith("/chapter");
+
+    const isTeacherPage = pathname?.startsWith("/teacher") ?? false;
+    const isCoursePage = pathname?.includes("/courses") ?? false;
+    const isSearchPage = pathname === "/search";
 
     return (
-        <div className="flex gap-x-2 ml-auto">
-            {isTeacherPage || isPlayerPage ? (
-                <Link href="/teacher/courses">
-                    <button>
-                        <LogOut className="h-4 w-4 mr-2" />
-                        exit
-                    </button>
-                </Link>
-            ) : (
-                <Link href="/teacher/courses">
-                    <Button size="sm" variant="ghost">
-                        Teacher
-                    </Button>
-                </Link>
+        <>
+            {isSearchPage && (
+                <div className="hidden md:block">
+                    <Suspense fallback={<SearchBarFallback />}>
+                        <SearchInput />
+                    </Suspense>
+                </div>
             )}
-            <UserButton />
-        </div>
+            <div className="flex gap-x-2 ml-auto">
+                {getNavButton(isTeacherPage, isCoursePage, userId)}
+            </div>
+        </>
     );
 };
-
-export default NavbarRoutes;

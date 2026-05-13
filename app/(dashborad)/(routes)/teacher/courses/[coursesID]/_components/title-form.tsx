@@ -18,7 +18,7 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 
 interface TitleFormProps {
-    initalData: {
+    initialData: {
         title: string;
     };
     courseId: string;
@@ -30,7 +30,7 @@ const formSchema = z.object({
 });
 
 export const TitleForm = (
-    { initalData,
+    { initialData,
         courseId,
     }: TitleFormProps
 ) => {
@@ -40,7 +40,7 @@ export const TitleForm = (
     const router = useRouter();
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
-        defaultValues: initalData,
+        defaultValues: initialData,
 
     });
     const { isSubmitting, isValid } = form.formState;
@@ -72,7 +72,7 @@ export const TitleForm = (
             </div>
             {!isEditing && (
                 <p className="text-sm mt-2">
-                    {initalData.title}
+                    {initialData.title}
                 </p>
             )}
             {isEditing && (

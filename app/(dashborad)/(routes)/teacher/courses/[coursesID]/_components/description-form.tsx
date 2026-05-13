@@ -20,7 +20,7 @@ import { useRouter } from "next/navigation";
 import { Textarea } from "@/components/ui/textarea";
 
 interface DesciptionFormProps {
-    initalData: {
+    initialData: {
         description: string | null;
     };
     courseId: string;
@@ -32,7 +32,7 @@ const formSchema = z.object({
 });
 
 export const DescriptionForm = (
-    { initalData,
+    { initialData,
         courseId,
     }: DesciptionFormProps
 ) => {
@@ -43,7 +43,7 @@ export const DescriptionForm = (
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-        description: initalData.description ?? "",
+        description: initialData.description ?? "",
     },
 
     });
@@ -79,10 +79,10 @@ export const DescriptionForm = (
             {!isEditing && (
                 <p className={cn(
                     "text-sm mt-2",
-                    !initalData.description && "text-slate-500 italic",
+                    !initialData.description && "text-slate-500 italic",
 
             )}>
-                    {initalData.description || "no description "}
+                    {initialData.description || "no description "}
                 </p>
             )}
             {isEditing && (

@@ -1,10 +1,49 @@
-const Search = () => {
-    return (    
-        <div className="flex flex-col items-center justify-center h-screen">
-            <h1 className="text-4xl font-bold mb-4">Search Page</h1>
-            <p className="text-lg text-gray-600">This is the search page of the dashboard.</p>
-        </div>
-    );
-}   
+import { redirect } from "next/navigation";
+import { db } from "@/lib/db";
+import { auth } from "@clerk/nextjs/server";
+import { SearchInput } from "@/components/search-input";
+import { getCourses } from "@/actions/get-courses";
+import { CoursesList } from "@/components/courses-list";
+import { Categories } from "./_components/categories";
 
-export default Search;
+interface SearchPageProps {
+    searchParams: Promise<{
+        title: string;
+        categoryId: string;
+    }>;
+}
+
+const SearchPage = async ({ searchParams }: SearchPageProps) => {
+    const { userId } = await auth();
+    const { title, categoryId } = await searchParams; // ← await
+
+    if (!userId) {
+        return redirect("/search");
+    }
+
+    const categories = await db.category.findMany({
+        orderBy: {
+            name: "asc",
+        },
+    });
+
+    const courses = await getCourses({
+        userId,
+        title,
+        categoryId,
+    });
+
+    return (
+        <>
+            <div className="px-6 pt-6 md:hidden md:mb-0 block">
+                <SearchInput />
+            </div>
+            <div className="p-6 space-y-4">
+                <Categories items={categories} />
+                <CoursesList items={courses} />
+            </div>
+        </>
+    );
+};
+
+export default SearchPage;

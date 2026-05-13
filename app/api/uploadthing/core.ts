@@ -15,12 +15,7 @@ export const ourFileRouter = {
         },
     })
         .middleware(() => handleAuth())
-        .onUploadComplete(async ({ metadata, file }) => {
-            return {
-                userId: metadata.userId,
-                url: file.url,
-            };
-        }),
+        .onUploadComplete(async () => {}),
     courseAttachment: f(["text", "image", "video", "audio", "pdf"])
         .middleware(() => handleAuth())
         .onUploadComplete(() => { }),
